@@ -18,6 +18,8 @@ namespace SimpleSocialMedia.Controllers
         {
             var posts = await _context.Posts
                 .Include(p => p.User)
+                .Include(p => p.Likes)
+                .ThenInclude(l => l.User)
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
 

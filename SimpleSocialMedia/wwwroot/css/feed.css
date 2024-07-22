@@ -32,3 +32,12 @@
     color: gray;
     font-size: 0.9em;
 }
+
+.likes {
+    display: flex;
+    align-items: center;
+}
+
+.like-actions-pic {
+    margin-right: 5px;
+}

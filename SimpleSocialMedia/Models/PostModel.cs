@@ -11,5 +11,6 @@ namespace SimpleSocialMedia.Models
         public UserModel User { get; set; }
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
+        public virtual ICollection<LikeModel>? Likes { get; set; }
     }
 }
