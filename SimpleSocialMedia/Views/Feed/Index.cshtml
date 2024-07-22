@@ -1,0 +1,27 @@
+﻿@model IEnumerable<SimpleSocialMedia.Models.PostModel>
+
+@{
+    ViewData["Title"] = "Новости";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/feed.css" />
+</head>
+
+<h1>Лента новостей</h1>
+
+@foreach (var post in Model)
+{
+    <div class="post">
+        <div class="post-header">
+            <img class="avatar" src="@post.User.AvatarUrl" alt="Avatar";" />
+            <div class="post-info">
+                <span class="username">@post.User.UserName</span>
+                <span class="created-at">@post.CreatedAt.ToString("g")</span>
+            </div>
+        </div>
+        <div class="post-content">
+            <p>@post.Content</p>
+        </div>
+    </div>
+}
