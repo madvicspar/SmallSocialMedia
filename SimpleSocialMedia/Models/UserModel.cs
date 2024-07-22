@@ -2,7 +2,7 @@
 
 namespace SimpleSocialMedia.Models
 {
-    public class UserModel : IdentityUser<long>
+    public class UserModel : IdentityUser
     {
         public string AvatarUrl { get; set; }
     }

@@ -7,7 +7,7 @@ namespace SimpleSocialMedia.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
         [ForeignKey("User")]
-        public long UserId { get; set; }
+        public string UserId { get; set; }
         public UserModel User { get; set; }
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
