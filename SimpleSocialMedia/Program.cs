@@ -1,5 +1,7 @@
-using SimpleSocialMedia.Utilities.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SimpleSocialMedia.Models;
+using SimpleSocialMedia.Utilities.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +12,31 @@ string? connectionString = builder.Configuration.GetConnectionString("DefaultCon
 builder.Services.AddDbContext<ApplicationDbContext>(options
                     => options.UseNpgsql(connectionString));
 
+builder.Services.AddIdentityCore<UserModel>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
 var app = builder.Build();
+
+// Seed database
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        var userManager = services.GetRequiredService<UserManager<UserModel>>();
+
+        await context.Database.MigrateAsync(); // Применение миграций
+        await context.Seed(userManager);
+    }
+    catch (Exception ex)
+    {
+        // Логирование ошибки (реализуйте логирование по своему усмотрению)
+        Console.WriteLine(ex.Message);
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -25,6 +51,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

@@ -14,6 +14,34 @@ namespace SimpleSocialMedia.Utilities.Data
         {
         }
 
+        public async Task Seed(UserManager<UserModel> userManager)
+        {
+            if (!userManager.Users.Any())
+            {
+                var user = new UserModel
+                {
+                    UserName = "admin",
+                    Email = "admin@example.com",
+                    AvatarUrl = "https://example.com/avatar.png"
+                };
+
+                var result = await userManager.CreateAsync(user, "Admin@123456");
+
+                if (result.Succeeded)
+                {
+                    var post = new PostModel
+                    {
+                        User = user,
+                        Content = "Welcome to the social media platform!",
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    Posts.Add(post);
+                    await SaveChangesAsync();
+                }
+            }
+        }
+
         public DbSet<UserModel> Users { get; set; } = null!;
         public DbSet<PostModel> Posts { get; set; } = null!;
         public DbSet<LikeModel> Likes { get; set; } = null!;
