@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SimpleSocialMedia.Models;
 using SimpleSocialMedia.Utilities.Data;
+using System.Security.Claims;
 
 namespace SimpleSocialMedia.Controllers
 {
@@ -26,8 +27,7 @@ namespace SimpleSocialMedia.Controllers
         // POST: Likes/{postId}
         public async Task<IActionResult> Add(long postId)
         {
-            //var userId = there must be an authorized user here;
-            var userId = "8ac9aa62-79f2-4fab-9f65-b161993d4ecf";
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var existingLike = await _context.Likes
                 .FirstOrDefaultAsync(l => l.PostId == postId && l.UserId == userId);
@@ -53,8 +53,7 @@ namespace SimpleSocialMedia.Controllers
         // DELETE: Likes/{postId}
         public async Task<IActionResult> Delete(long postId)
         {
-            //var userId = there must be an authorized user here;
-            var userId = "8ac9aa62-79f2-4fab-9f65-b161993d4ecf";
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var existingLike = await _context.Likes
                 .FirstOrDefaultAsync(l => l.PostId == postId && l.UserId == userId);

@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<SimpleSocialMedia.Models.PostModel>
 
+@using System.Security.Claims;
+
 @{
     ViewData["Title"] = "Новости";
     var defaultAvatarUrl = Url.Content("~/images/default-user-pic.jpg");
@@ -28,7 +30,7 @@
         <div class="post-actions">
             <div class="likes">
                 <div class="like-actions-pic">
-                    <img src="~/images/@(post.Likes.Any(l => l.UserId == @* User.GetUserId() *@  post.UserId ) ? "liked.svg" : "not-liked.svg")" height="30px" class="like-toggle" />
+                    <img src="~/images/@(post.Likes.Any(l => l.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier)) ? "liked.svg" : "not-liked.svg")" height="30px" class="like-toggle" />
                 </div>
                 <span class="likes-count">@post.Likes.Count</span>
             </div>
