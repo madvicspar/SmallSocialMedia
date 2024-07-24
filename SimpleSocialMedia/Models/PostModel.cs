@@ -8,7 +8,7 @@ namespace SimpleSocialMedia.Models
         public long Id { get; set; }
         [ForeignKey("User")]
         public string UserId { get; set; }
-        public UserModel User { get; set; }
+        public UserModel? User { get; set; }
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
         public virtual ICollection<LikeModel>? Likes { get; set; }

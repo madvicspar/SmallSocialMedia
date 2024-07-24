@@ -14,28 +14,17 @@
 
 <h1>Лента новостей</h1>
 
-@foreach (var post in Model)
-{
-    <div class="post" data-post-id="@post.Id">
-        <div class="post-header">
-            <img class="avatar" src="@(post.User.AvatarUrl ?? defaultAvatarUrl)" alt="Avatar" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
-            <div class="post-info">
-                <span class="username">@post.User.UserName</span>
-                <span class="created-at">@post.CreatedAt.ToString("g")</span>
-            </div>
-        </div>
-        <div class="post-content">
-            <p>@post.Content</p>
-        </div>
-        <div class="post-actions">
-            <div class="likes">
-                <div class="like-actions-pic">
-                    <img src="~/images/@(post.Likes.Any(l => l.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier)) ? "liked.svg" : "not-liked.svg")" height="30px" class="like-toggle" />
-                </div>
-                <span class="likes-count">@post.Likes.Count</span>
-            </div>
-        </div>
+<form id="new-post-form" class="new-post-form">
+    <div class="new-post-header">
+        <img class="avatar" src="@(User.Claims.FirstOrDefault(c => c.Type == "AvatarUrl")?.Value ?? defaultAvatarUrl)" alt="Avatar" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
+        <textarea id="new-post-content" placeholder="Введите текст..." rows="4" required></textarea>
     </div>
-}
+    <hr class="sep"/>
+    <button class="new-post-button">Опубликовать</button>
+</form>
+
+<div class="post-feed">
+    @await Html.PartialAsync("_PostsListPartial", Model)
+</div>
 
 <script src="~/js/feed.js" />

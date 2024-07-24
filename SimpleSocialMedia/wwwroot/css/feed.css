@@ -1,9 +1,59 @@
-﻿.post {
+﻿form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.new-post-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.new-post-header {
+    display: flex;
+    align-items: flex-start;
+}
+
+input[type="text"], textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 10px 10px 0 0;
+    font-size: 16px;
+    overflow: hidden;
+    max-height: 60vh;
+    resize: none;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus, textarea:focus {
+    border-color: #007BFF;
+    outline: none;
+}
+
+.sep {
+    margin-top: 10px;
+}
+
+.new-post-button {
+    align-self: flex-end;
+    background-color: rgb(29, 155, 240);
+    border: none;
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 10px 20px;
+}
+
+.post {
     background-color: white;
     border-radius: 10px;
     padding: 20px;
     margin-bottom: 20px;
-    max-width: 40%;
 }
 
 .post-header {

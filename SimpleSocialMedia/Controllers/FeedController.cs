@@ -1,29 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SimpleSocialMedia.Utilities.Data;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SimpleSocialMedia.Models;
 
 namespace SimpleSocialMedia.Controllers
 {
+    [Authorize]
     public class FeedController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public FeedController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         // GET: Feed
         public async Task<IActionResult> Index()
         {
-            var posts = await _context.Posts
-                .Include(p => p.User)
-                .Include(p => p.Likes)
-                .ThenInclude(l => l.User)
-                .OrderByDescending(p => p.CreatedAt)
-                .ToListAsync();
-
-            return View(posts);
+            return View(new List<PostModel>());
         }
     }
 

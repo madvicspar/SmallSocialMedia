@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SimpleSocialMedia.Models;
 using SimpleSocialMedia.Utilities.Data;
@@ -6,6 +7,7 @@ using System.Security.Claims;
 
 namespace SimpleSocialMedia.Controllers
 {
+    [Authorize]
     public class LikesController : Controller
     {
         private readonly ApplicationDbContext _context;
