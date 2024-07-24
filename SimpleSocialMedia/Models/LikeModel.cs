@@ -8,10 +8,10 @@ namespace SimpleSocialMedia.Models
         public long Id { get; set; }
         [ForeignKey("User")]
         public string UserId { get; set; }
-        public UserModel User { get; set; }
+        public virtual UserModel User { get; set; }
         [ForeignKey("Post")]
         public long PostId { get; set; }
-        public PostModel Post { get; set; }
+        public virtual PostModel Post { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }

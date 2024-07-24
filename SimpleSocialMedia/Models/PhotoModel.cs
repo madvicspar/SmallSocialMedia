@@ -8,7 +8,7 @@ namespace SimpleSocialMedia.Models
         public long Id { get; set; }
         [ForeignKey("Post")]
         public long PostId { get; set; }
-        public PostModel Post { get; set; }
+        public virtual PostModel Post { get; set; }
         public string Url { get; set; }
         public string Description { get; set; }
     }

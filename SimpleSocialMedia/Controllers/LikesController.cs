@@ -10,46 +10,55 @@ namespace SimpleSocialMedia.Controllers
     [Authorize]
     public class LikesController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public LikesController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         // GET: Likes/5
         public async Task<IActionResult> Get(long postId)
         {
-            var count = await _context.Likes
+            using (var serviceScope = ServiceActivator.GetScope())
+            {
+                var dataBase = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                if (dataBase == null)
+                {
+                    return PartialView("_PostsListPartial", new List<PostModel>());
+                }
+                var count = await dataBase.Likes
                 .CountAsync(l => l.PostId == postId);
 
-            return Ok(new { count });
+                return Ok(new { count });
+            }
         }
 
         // POST: Likes/{postId}
         public async Task<IActionResult> Add(long postId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var existingLike = await _context.Likes
-                .FirstOrDefaultAsync(l => l.PostId == postId && l.UserId == userId);
-
-            if (existingLike != null)
+            using (var serviceScope = ServiceActivator.GetScope())
             {
+                var dataBase = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                if (dataBase == null)
+                {
+                    return PartialView("_PostsListPartial", new List<PostModel>());
+                }
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var existingLike = await dataBase.Likes
+                    .FirstOrDefaultAsync(l => l.PostId == postId && l.UserId == userId);
+
+                if (existingLike != null)
+                {
+                    return Ok();
+                }
+
+                var like = new LikeModel
+                {
+                    UserId = userId,
+                    PostId = postId,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                dataBase.Likes.Add(like);
+                await dataBase.SaveChangesAsync();
+
                 return Ok();
             }
-
-            var like = new LikeModel
-            {
-                UserId = userId,
-                PostId = postId,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            _context.Likes.Add(like);
-            await _context.SaveChangesAsync();
-
-            return Ok();
         }
 
         // DELETE: Likes/{postId}
@@ -57,18 +66,26 @@ namespace SimpleSocialMedia.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var existingLike = await _context.Likes
+            using (var serviceScope = ServiceActivator.GetScope())
+            {
+                var dataBase = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                if (dataBase == null)
+                {
+                    return PartialView("_PostsListPartial", new List<PostModel>());
+                }
+                var existingLike = await dataBase.Likes
                 .FirstOrDefaultAsync(l => l.PostId == postId && l.UserId == userId);
 
-            if (existingLike == null)
-            {
+                if (existingLike == null)
+                {
+                    return Ok();
+                }
+
+                dataBase.Likes.Remove(existingLike);
+                await dataBase.SaveChangesAsync();
+
                 return Ok();
             }
-
-            _context.Likes.Remove(existingLike);
-            await _context.SaveChangesAsync();
-
-            return Ok();
         }
     }
 }

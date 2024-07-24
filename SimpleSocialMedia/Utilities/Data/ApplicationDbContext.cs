@@ -42,9 +42,9 @@ namespace SimpleSocialMedia.Utilities.Data
             }
         }
 
-        public DbSet<UserModel> Users { get; set; } = null!;
-        public DbSet<PostModel> Posts { get; set; } = null!;
-        public DbSet<LikeModel> Likes { get; set; } = null!;
-        public DbSet<PhotoModel> Photos { get; set; } = null!;
+        public virtual DbSet<UserModel> Users { get; set; } = null!;
+        public virtual DbSet<PostModel> Posts { get; set; } = null!;
+        public virtual DbSet<LikeModel> Likes { get; set; } = null!;
+        public virtual DbSet<PhotoModel> Photos { get; set; } = null!;
     }
 }

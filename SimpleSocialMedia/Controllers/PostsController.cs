@@ -10,24 +10,25 @@ namespace SimpleSocialMedia.Controllers
     [Authorize]
     public class PostsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public PostsController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         // GET: Posts
         public async Task<IActionResult> Get()
         {
-            var posts = await _context.Posts
-                .Include(p => p.User)
-                .Include(p => p.Likes)
-                .ThenInclude(l => l.User)
-                .OrderByDescending(p => p.CreatedAt)
-                .ToListAsync();
+            using (var serviceScope = ServiceActivator.GetScope())
+            {
+                var dataBase = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                if (dataBase == null)
+                {
+                    return PartialView("_PostsListPartial", new List<PostModel>());
+                }
+                var posts = await dataBase.Posts
+                    .Include(p => p.User)
+                    .Include(p => p.Likes)
+                    .ThenInclude(l => l.User)
+                    .OrderByDescending(p => p.CreatedAt)
+                    .ToListAsync();
 
-            return PartialView("_PostsListPartial", posts);
+                return PartialView("_PostsListPartial", posts);
+            }
         }
 
         public async Task<IActionResult> Add(string content)
@@ -41,9 +42,17 @@ namespace SimpleSocialMedia.Controllers
                     UserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
                 };
 
-                await _context.Posts.AddAsync(post);
-                await _context.SaveChangesAsync();
-                return Ok();
+                using (var serviceScope = ServiceActivator.GetScope())
+                {
+                    var dataBase = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                    if (dataBase == null)
+                    {
+                        return PartialView("_PostsListPartial", new List<PostModel>());
+                    }
+                    await dataBase.Posts.AddAsync(post);
+                    await dataBase.SaveChangesAsync();
+                    return Ok();
+                }
             }
             catch
             {
