@@ -1,0 +1,29 @@
+﻿@model SimpleSocialMedia.Models.UserModel
+
+@{
+    ViewData["Title"] = Model.UserName;
+    var defaultAvatarUrl = Url.Content("~/images/default-user-pic.jpg");
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/profile.css"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<div class="profile-header">
+    <div class="header-photo" style="background-image: url('@Url.Content(Model.HeaderUrl)');"></div>
+    <div class="header-info">
+        <img class="avatar" src="@(Model.AvatarUrl ?? defaultAvatarUrl)" alt="Фотография пользователя" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
+        <div class="user-info">
+            <h2>@(Model.LastName + " " ?? "")@(Model.FirstName + " " ?? "")@(Model.Pathronymic ?? "")</h2>
+            <p>Email: @Model.Email</p>
+            <p>@Model.Description</p>
+        </div>
+    </div>
+</div>
+
+<form id="header-photo-form" method="post" enctype="multipart/form-data" action="/Users/UploadHeaderPhoto">
+    <label for="header-photo-input">Upload Header Photo:</label>
+    <input type="file" id="header-photo-input" name="headerPhoto" accept="image/*" required />
+    <button type="submit" class="upload-header-photo">Upload</button>
+</form>

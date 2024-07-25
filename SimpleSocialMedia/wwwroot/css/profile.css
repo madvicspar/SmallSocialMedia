@@ -1,0 +1,45 @@
+﻿.profile-header {
+    background-color: white;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    height: 65vh;
+    min-height: 65vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.header-photo {
+    width: 100%;
+    height: 60%;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px 10px 0 0;
+}
+
+.header-info {
+    display: flex;
+    padding: 20px;
+    background-color: white;
+    height: 40%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.avatar {
+    width: 150px;
+    height: 150px;
+    border: 5px solid #ccc;
+    border-radius: 50%;
+    margin-right: 10px;
+    position: absolute;
+    top: calc(40% - 150px);
+    left: 50px;
+}
+
+.user-info {
+    margin-left: 220px;
+    margin-top: 0px;
+    justify-content: flex-start;
+}

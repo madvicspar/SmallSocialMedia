@@ -26,4 +26,10 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\uploads\images\avatars\" />
+    <Folder Include="wwwroot\uploads\images\headers\" />
+    <Folder Include="wwwroot\uploads\images\posts\" />
+  </ItemGroup>
+
 </Project>
