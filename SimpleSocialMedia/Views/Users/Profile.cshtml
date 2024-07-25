@@ -20,6 +20,7 @@
             <p>Email: @Model.Email</p>
             <p>@Model.Description</p>
         </div>
+        <button class="edit-profile-button">Редактировать профиль</button>
     </div>
 </div>
 
@@ -28,3 +29,64 @@
     <input type="file" id="header-photo-input" name="headerPhoto" accept="image/*" required />
     <button type="submit" class="upload-header-photo">Upload</button>
 </form>
+
+<!-- Modal -->
+<div id="editProfileModal" class="modal">
+    <div class="modal-content">
+        <div class="edit-actions">
+            <button class="close" aria-label="Close" style="background: none; border: none; cursor: pointer; padding: 0;">
+                <svg viewBox="0 0 24 24" aria-hidden="true" role="img" class="icon" style="color: rgb(15, 20, 25); width: 24px; height: 24px;">
+                    <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                </svg>
+            </button>
+            <h3>Редактирование профиля</h3>
+            <button type="submit" class="save-profile">Сохранить</button>
+        </div>
+        <div class="edit-header">
+            <div class="edit-header-photo-container">
+                <div class="edit-header-photo" style="background-image: url(@Url.Content("~/uploads/headers/" + Model.HeaderUrl)), url(@Url.Content(defaultHeaderPhotoUrl));"></div>
+                <div class="header-actions">
+                    <div class="add-header-photo-container">
+                        <img class="add-header-photo" src="~/images/add-photo.svg" alt="Add Header Photo"/>
+                    </div>
+                    <div class="delete-header-photo-container">
+                        <button class="delete-header-photo" aria-label="Close" style="background: none; border: none; cursor: pointer; padding: 0;">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" role="img" class="icon" style="color: rgb(15, 20, 25); width: 24px; height: 24px;">
+                                <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <img class="edit-avatar" src="@(Model.AvatarUrl ?? defaultAvatarUrl)" alt="Фотография пользователя" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
+        </div>
+        <form id="edit-profile-form" method="post" action="/Users/EditProfile" enctype="multipart/form-data">
+            <div class="edit-container">
+                <label for="lastName">Фамилия</label>
+                <input type="text" id="lastName" name="LastName" value="@Model.LastName" required />
+            </div>
+
+            <div class="edit-container">
+                <label for="firstName">Имя</label>
+                <input type="text" id="firstName" name="FirstName" value="@Model.FirstName" required />
+            </div>
+
+            <div class="edit-container">
+                <label for="pathronymic">Отчество</label>
+                <input type="text" id="pathronymic" name="Pathronymic" value="@Model.Pathronymic" />
+            </div>
+
+            <div class="edit-container">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="Email" value="@Model.Email" required />
+            </div>
+
+            <div class="edit-container">
+                <label for="description">Описание</label>
+                <textarea id="description" name="Description" required>@Model.Description</textarea>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="~/js/profile.js" />
