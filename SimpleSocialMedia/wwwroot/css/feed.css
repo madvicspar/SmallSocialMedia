@@ -78,6 +78,7 @@ input[type="text"]:focus, textarea:focus {
     color: #000;
     font-weight: bold;
     text-decoration: none;
+    cursor: pointer;
 }
 
 .username:hover {
@@ -97,4 +98,8 @@ input[type="text"]:focus, textarea:focus {
 
 .like-actions-pic {
     margin-right: 5px;
+}
+
+.like-toggle {
+    cursor: pointer;
 }
