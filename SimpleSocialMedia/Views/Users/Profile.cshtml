@@ -2,7 +2,8 @@
 
 @{
     ViewData["Title"] = Model.UserName;
-    var defaultAvatarUrl = Url.Content("~/images/default-user-pic.jpg");
+    var defaultAvatarUrl = Url.Content("/images/default-user-pic.jpg");
+    var defaultHeaderPhotoUrl = Url.Content("~/images/default-user-header-pic.jpg");
 }
 
 <head>
@@ -11,7 +12,7 @@
 </head>
 
 <div class="profile-header">
-    <div class="header-photo" style="background-image: url('@Url.Content(Model.HeaderUrl)');"></div>
+    <div class="header-photo" style="background-image: url(@Url.Content("~/uploads/headers/" + Model.HeaderUrl)), url(@Url.Content(defaultHeaderPhotoUrl));"></div>
     <div class="header-info">
         <img class="avatar" src="@(Model.AvatarUrl ?? defaultAvatarUrl)" alt="Фотография пользователя" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
         <div class="user-info">

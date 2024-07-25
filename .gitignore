@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Ignore uploaded header photos
+/SimpleSocialMedia/wwwroot/uploads/headers

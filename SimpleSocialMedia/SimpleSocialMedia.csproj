@@ -27,9 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\uploads\images\avatars\" />
-    <Folder Include="wwwroot\uploads\images\headers\" />
-    <Folder Include="wwwroot\uploads\images\posts\" />
+    <Folder Include="wwwroot\uploads\avatars\" />
+    <Folder Include="wwwroot\uploads\posts\" />
   </ItemGroup>
 
 </Project>
