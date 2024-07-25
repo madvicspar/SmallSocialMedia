@@ -67,4 +67,9 @@ $(".like-toggle").click(function () {
     });
 });
 
+$(document).on('click', '.username', function (e) {
+    var userId = $(this).data('user-id');
+    window.location.href = `/Users/Profile?userId=${userId}`;
+});
+
 loadPosts();

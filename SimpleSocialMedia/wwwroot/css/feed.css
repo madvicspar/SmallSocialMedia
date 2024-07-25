@@ -75,7 +75,14 @@ input[type="text"]:focus, textarea:focus {
 }
 
 .username {
+    color: #000;
     font-weight: bold;
+    text-decoration: none;
+}
+
+.username:hover {
+    text-decoration: underline;
+    color: #000;
 }
 
 .created-at {
