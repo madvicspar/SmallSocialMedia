@@ -35,3 +35,7 @@ $('.delete-header-photo-container').on('click', function () {
     var backgroundImage = 'url(' + initialHeaderPhotoUrl + '), url(' + defaultHeaderPhotoUrl + ')';
     $('.edit-header-photo').css('background-image', backgroundImage);
 });
+
+$('.save-profile').on('click', function () {
+    $('#edit-profile-form').submit();
+});

@@ -1,12 +1,19 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace SimpleSocialMedia.Models
 {
     public class UserModel : IdentityUser
     {
+        [Required(ErrorMessage = "Имя обязательно для заполнения")]
+        [RegularExpression(@"^[A-ZА-ЯЁ].*", ErrorMessage = "Имя должно начинаться с заглавной буквы")]
         public string FirstName { get; set; }
-        public string? LastName { get; set; }
-        public string? Pathronymic { get; set; }
+        [Required(ErrorMessage = "Фамилия обязательна для заполнения")]
+        [RegularExpression(@"^[A-ZА-ЯЁ].*", ErrorMessage = "Фамилия должна начинаться с заглавной буквы")]
+        public string LastName { get; set; }
+        [Required(ErrorMessage = "Отчество обязательно для заполнения")]
+        [RegularExpression(@"^[A-ZА-ЯЁ].*", ErrorMessage = "Отчество должно начинаться с заглавной буквы")]
+        public string Pathronymic { get; set; }
         public string? Description { get; set; }
         public string? AvatarUrl { get; set; }
         public string? HeaderUrl { get; set; }

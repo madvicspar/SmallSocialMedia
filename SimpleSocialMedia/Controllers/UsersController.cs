@@ -43,14 +43,15 @@ namespace SimpleSocialMedia.Controllers
             }
         }
 
-        /// <summary>
-        /// Handles the upload of a new header photo for the current user
-        /// </summary>
-        /// <param name="headerPhoto">The file to be uploaded as the new header photo</param>
-        /// <returns>An IActionResult indicating the result of the upload operation</returns>
         [HttpPost]
-        public async Task<IActionResult> UploadHeaderPhoto(IFormFile headerPhoto)
+        public async Task<IActionResult> Edit(UserModel model, IFormFile headerPhoto)
         {
+            ModelState.Remove(nameof(headerPhoto));
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Profile", new { userId = model.Id });
+            }
+
             using (var serviceScope = ServiceActivator.GetScope())
             {
                 var dataBase = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
@@ -59,35 +60,55 @@ namespace SimpleSocialMedia.Controllers
                     return NotFound();
                 }
 
-                if (headerPhoto == null || headerPhoto.Length == 0)
-                {
-                    return BadRequest("No file uploaded.");
-                }
-
+                // Находим пользователя по ID
                 var user = await dataBase.Users.FindAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
                 if (user == null)
                 {
-                    return NotFound("User not found.");
+                    return NotFound();
                 }
 
-                string uniqueFileName = await SaveFileAsync(headerPhoto);
+                // Обновляем данные пользователя
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Pathronymic = model.Pathronymic;
+                user.Email = model.Email;
+                user.Description = model.Description;
 
-                if (uniqueFileName == null)
+                // Обработка фото шапки
+                if (headerPhoto != null && headerPhoto.Length > 0)
                 {
-                    return StatusCode(500, "An error occurred while saving the file.");
+                    string uniqueFileName = await SaveFileAsync(headerPhoto);
+
+                    if (uniqueFileName == null)
+                    {
+                        return StatusCode(500, "An error occurred while saving the file.");
+                    }
+
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(user.HeaderUrl))
+                        {
+                            DeletePhoto(user.HeaderUrl);
+                        }
+                    }
+                    catch
+                    {
+                        DeletePhoto(uniqueFileName);
+                        return StatusCode(500, "An error occurred while uploading the header photo.");
+                    }
+
+                    user.HeaderUrl = uniqueFileName;
+                }
+                else if (!string.IsNullOrEmpty(user.HeaderUrl))
+                {
+                    user.HeaderUrl = null;
                 }
 
-                try
-                {
-                    await UpdateUserProfileAsync(dataBase, user, uniqueFileName);
-                    return RedirectToAction("Profile", new { userId = user.Id });
+                // Сохранение изменений в базе данных
+                dataBase.Update(user);
+                await dataBase.SaveChangesAsync();
 
-                }
-                catch
-                {
-                    DeletePhoto(uniqueFileName);
-                    return StatusCode(500, "An error occurred while uploading the header photo.");
-                }
+                return RedirectToAction("Profile", new { userId = user.Id });
             }
         }
 
@@ -114,26 +135,6 @@ namespace SimpleSocialMedia.Controllers
             catch
             {
                 return null;
-            }
-        }
-
-        /// <summary>
-        /// Updates the user's profile with the new header photo URL and removes the previous header photo if it exists.
-        /// </summary>
-        /// <param name="dataBase">The database context.</param>
-        /// <param name="user">The user entity to update.</param>
-        /// <param name="uniqueFileName">The unique file name of the new header photo.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task UpdateUserProfileAsync(ApplicationDbContext dataBase, UserModel user, string uniqueFileName)
-        {
-            var previousHeaderUrl = user.HeaderUrl;
-            user.HeaderUrl = uniqueFileName;
-            dataBase.Update(user);
-            await dataBase.SaveChangesAsync();
-
-            if (!string.IsNullOrEmpty(previousHeaderUrl))
-            {
-                DeletePhoto(previousHeaderUrl);
             }
         }
 

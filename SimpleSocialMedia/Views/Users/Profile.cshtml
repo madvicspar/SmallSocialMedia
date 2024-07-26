@@ -22,16 +22,17 @@
         <img class="avatar" src="@(Model.AvatarUrl ?? defaultAvatarUrl)" alt="Фотография пользователя" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
         <div class="user-info">
             <h2>@(Model.LastName + " " ?? "")@(Model.FirstName + " " ?? "")@(Model.Pathronymic ?? "")</h2>
-            <p>Email: @Model.Email</p>
+            <p>
+                @if (!string.IsNullOrEmpty(Model.Email))
+                {
+                    <text>Email: @Model.Email</text>
+                }
+            </p>
             <p>@Model.Description</p>
         </div>
         <button class="edit-profile-button">Редактировать профиль</button>
     </div>
 </div>
-
-<form id="header-photo-form" enctype="multipart/form-data" hidden>
-    <input type="file" id="add-header-photo-input" name="headerPhoto" accept="image/*" />
-</form>
 
 <!-- Modal -->
 <div id="editProfileModal" class="modal">
@@ -63,33 +64,38 @@
             </div>
             <img class="edit-avatar" src="@(Model.AvatarUrl ?? defaultAvatarUrl)" alt="Фотография пользователя" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
         </div>
-        <form id="edit-profile-form" method="post" action="/Users/EditProfile" enctype="multipart/form-data">
+        <form id="edit-profile-form" method="post" action="/Users/Edit" enctype="multipart/form-data">
             <div class="edit-container">
                 <label for="lastName">Фамилия</label>
-                <input type="text" id="lastName" name="LastName" value="@Model.LastName" required />
+                @Html.TextBoxFor(m => m.LastName, new { @id = "lastName", @required = "required" })
+                @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
             </div>
 
             <div class="edit-container">
                 <label for="firstName">Имя</label>
-                <input type="text" id="firstName" name="FirstName" value="@Model.FirstName" required />
+                @Html.TextBoxFor(m => m.FirstName, new { @id = "firstName", @required = "required" })
+                @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
             </div>
 
             <div class="edit-container">
                 <label for="pathronymic">Отчество</label>
-                <input type="text" id="pathronymic" name="Pathronymic" value="@Model.Pathronymic" />
-            </div>
-
-            <div class="edit-container">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="Email" value="@Model.Email" required />
+                @Html.TextBoxFor(m => m.Pathronymic, new { @id = "pathronymic", @required = "required" })
+                @Html.ValidationMessageFor(m => m.Pathronymic, "", new { @class = "text-danger" })
             </div>
 
             <div class="edit-container">
                 <label for="description">Описание</label>
                 <textarea id="description" name="Description" required>@Model.Description</textarea>
             </div>
+
+            <input type="file" id="add-header-photo-input" name="headerPhoto" accept="image/*" style="display:none;" />
+
         </form>
     </div>
 </div>
 
 <script src="~/js/profile.js" />
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
