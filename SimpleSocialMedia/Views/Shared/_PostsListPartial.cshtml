@@ -8,7 +8,7 @@
 {
     <div class="post" data-post-id="@post.Id">
         <div class="post-header">
-            <img class="avatar" src="@(post.User.AvatarUrl ?? defaultAvatarUrl)" alt="Avatar" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
+            <img class="post-avatar" src="@(post.User.AvatarUrl ?? defaultAvatarUrl)" alt="Avatar" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
             <div class="post-info">
                 <a class="username" data-user-id="@post.User.Id">@post.User.UserName</a>
                 <span class="created-at">@post.CreatedAt.ToString("g")</span>

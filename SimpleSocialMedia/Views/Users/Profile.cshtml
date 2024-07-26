@@ -9,6 +9,7 @@
 
 <head>
     <link rel="stylesheet" href="~/css/profile.css"/>
+    <link rel="stylesheet" href="~/css/posts-feed.css"/>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         var initialHeaderPhotoUrl = '@(initialHeaderPhotoUrl)';
@@ -32,6 +33,10 @@
         </div>
         <button class="edit-profile-button">Редактировать профиль</button>
     </div>
+</div>
+
+<div class="post-feed">
+    @await Html.PartialAsync("_PostsListPartial", Model.Posts)
 </div>
 
 <!-- Modal -->
@@ -94,8 +99,9 @@
     </div>
 </div>
 
-<script src="~/js/profile.js" />
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+<script src="~/js/profile.js"></script>
+<script src="~/js/posts-feed.js"></script>

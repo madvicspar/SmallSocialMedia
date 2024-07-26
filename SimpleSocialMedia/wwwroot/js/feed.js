@@ -12,9 +12,11 @@
 $('.new-post-button').click(function (e) {
     e.preventDefault();
     var content = $('#new-post-content').val();
+
     $.ajax({
-        url: `/Posts/Add?content=${content}`,
+        url: `/Posts/Add`,
         type: 'POST',
+        data: { content: content },
         success: function (data) {
             $('#new-post-content').val('');
             loadPosts();
@@ -65,11 +67,6 @@ $(".like-toggle").click(function () {
             console.error("Error: " + error);
         }
     });
-});
-
-$(document).on('click', '.username', function (e) {
-    var userId = $(this).data('user-id');
-    window.location.href = `/Users/Profile?userId=${userId}`;
 });
 
 loadPosts();

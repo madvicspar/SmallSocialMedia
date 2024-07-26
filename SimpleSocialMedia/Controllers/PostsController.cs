@@ -47,7 +47,7 @@ namespace SimpleSocialMedia.Controllers
                     var dataBase = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
                     if (dataBase == null)
                     {
-                        return PartialView("_PostsListPartial", new List<PostModel>());
+                        return BadRequest();
                     }
                     await dataBase.Posts.AddAsync(post);
                     await dataBase.SaveChangesAsync();

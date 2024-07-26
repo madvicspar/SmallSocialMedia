@@ -9,22 +9,26 @@
 
 <head>
     <link rel="stylesheet" href="~/css/feed.css" />
+    <link rel="stylesheet" href="~/css/posts-feed.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <h1>Лента новостей</h1>
 
-<form id="new-post-form" class="new-post-form">
+<div id="new-post">
     <div class="new-post-header">
-        <img class="avatar" src="@(User.Claims.FirstOrDefault(c => c.Type == "AvatarUrl")?.Value ?? defaultAvatarUrl)" alt="Avatar" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
-        <textarea id="new-post-content" placeholder="Введите текст..." rows="4" required></textarea>
+        <img class="post-avatar" src="@(User.Claims.FirstOrDefault(c => c.Type == "AvatarUrl")?.Value ?? defaultAvatarUrl)" alt="Avatar" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
+        <form id="new-post-form" class="new-post-form">
+            <textarea id="new-post-content" name="content" placeholder="Введите текст..." rows="4" required></textarea>
+        </form>
     </div>
-    <hr class="sep"/>
+    <hr class="sep" />
     <button class="new-post-button">Опубликовать</button>
-</form>
+</div>
 
 <div class="post-feed">
     @await Html.PartialAsync("_PostsListPartial", Model)
 </div>
 
-<script src="~/js/feed.js" />
+<script src="~/js/feed.js"></script>
+<script src="~/js/posts-feed.js"></script>
