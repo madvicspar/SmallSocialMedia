@@ -1,4 +1,46 @@
-﻿$(document).on('click', '.like-toggle', function (e) {
+﻿$(document).on('input', '#new-post-content', function (e) {
+    this.style.height = 'auto';
+    if (this.scrollHeight > window.innerHeight * 0.6) {
+        this.style.height = window.innerHeight * 0.6 + 'px';
+        this.style.overflowY = 'scroll';
+    } else {
+        this.style.height = (this.scrollHeight) + 'px';
+        this.style.overflowY = 'hidden';
+    }
+}).trigger('input');
+
+$(document).on('click', '.new-post-button', function (e) {
+    e.preventDefault();
+    var content = $('#new-post-content').val();
+
+    $.ajax({
+        url: `/Posts/Add`,
+        type: 'POST',
+        data: { content: content },
+        success: function (data) {
+            $('#new-post-content').val('');
+            loadPosts();
+        },
+        error: function (data) {
+            alert('Ошибка при добавлении поста');
+        }
+    });
+});
+
+function loadPosts() {
+    $.ajax({
+        url: '/Posts/Get',
+        type: 'GET',
+        success: function (response) {
+            $('.post-feed').html(response);
+        },
+        error: function (xhr, status, error) {
+            alert(error);
+        }
+    });
+}
+
+$(document).on('click', '.like-toggle', function (e) {
     var $this = $(this);
     var $post = $this.closest(".post");
     var postId = $post.data("post-id");

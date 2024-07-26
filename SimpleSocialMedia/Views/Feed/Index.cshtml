@@ -15,17 +15,6 @@
 
 <h1>Лента новостей</h1>
 
-<div id="new-post">
-    <div class="new-post-header">
-        <img class="post-avatar" src="@(User.Claims.FirstOrDefault(c => c.Type == "AvatarUrl")?.Value ?? defaultAvatarUrl)" alt="Avatar" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
-        <form id="new-post-form" class="new-post-form">
-            <textarea id="new-post-content" name="content" placeholder="Введите текст..." rows="4" required></textarea>
-        </form>
-    </div>
-    <hr class="sep" />
-    <button class="new-post-button">Опубликовать</button>
-</div>
-
 <div class="post-feed">
     @await Html.PartialAsync("_PostsListPartial", Model)
 </div>

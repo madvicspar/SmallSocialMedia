@@ -4,6 +4,17 @@
     var defaultAvatarUrl = Url.Content("~/images/default-user-pic.jpg");
 }
 
+<div id="new-post">
+    <div class="new-post-header">
+        <img class="post-avatar" src="@(User.Claims.FirstOrDefault(c => c.Type == "AvatarUrl")?.Value ?? defaultAvatarUrl)" alt="Avatar" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
+        <form id="new-post-form" class="new-post-form">
+            <textarea id="new-post-content" name="content" placeholder="Введите текст..." rows="4" required></textarea>
+        </form>
+    </div>
+    <hr class="sep" />
+    <button class="new-post-button">Опубликовать</button>
+</div>
+
 @foreach (var post in Model)
 {
     <div class="post" data-post-id="@post.Id">
