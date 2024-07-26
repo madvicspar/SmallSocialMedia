@@ -4,11 +4,16 @@
     ViewData["Title"] = Model.UserName;
     var defaultAvatarUrl = Url.Content("/images/default-user-pic.jpg");
     var defaultHeaderPhotoUrl = Url.Content("~/images/default-user-header-pic.jpg");
+    var initialHeaderPhotoUrl = Url.Content("~/uploads/headers/" + Model.HeaderUrl);
 }
 
 <head>
     <link rel="stylesheet" href="~/css/profile.css"/>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        var initialHeaderPhotoUrl = '@(initialHeaderPhotoUrl)';
+        var defaultHeaderPhotoUrl = '@(defaultHeaderPhotoUrl)';
+    </script>
 </head>
 
 <div class="profile-header">
@@ -24,10 +29,8 @@
     </div>
 </div>
 
-<form id="header-photo-form" method="post" enctype="multipart/form-data" action="/Users/UploadHeaderPhoto">
-    <label for="header-photo-input">Upload Header Photo:</label>
-    <input type="file" id="header-photo-input" name="headerPhoto" accept="image/*" required />
-    <button type="submit" class="upload-header-photo">Upload</button>
+<form id="header-photo-form" enctype="multipart/form-data" hidden>
+    <input type="file" id="add-header-photo-input" name="headerPhoto" accept="image/*" />
 </form>
 
 <!-- Modal -->
