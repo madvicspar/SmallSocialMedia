@@ -2,6 +2,7 @@
 @using System.Security.Claims;
 @{
     var defaultAvatarUrl = Url.Content("~/images/default-user-pic.jpg");
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
 
 <div id="new-post">
@@ -21,8 +22,28 @@
         <div class="post-header">
             <img class="post-avatar" src="@(post.User.AvatarUrl ?? defaultAvatarUrl)" alt="Avatar" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
             <div class="post-info">
-                <a class="username" data-user-id="@post.User.Id">@post.User.UserName</a>
+                <a class="username-link" data-user-id="@post.User.Id">
+                    <span class="username">@post.User.UserName</span>
+                </a>
                 <span class="created-at">@post.CreatedAt.ToString("g")</span>
+            </div>
+            <div class="post-menu">
+                <button class="post-menu-button" style="background: none; border: none; cursor: pointer; padding: 0;">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" role="img" class="icon" style="color: rgb(15, 20, 25); width: 24px; height: 24px;">
+                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                    </svg>
+                </button>
+                <div class="post-menu-content" style="display: none;">
+                    @if (post.User.Id == currentUserId)
+                    {
+                        <button class="delete-post">Удалить</button>
+                        <button class="">Еще одна заглушка</button>
+                    }
+                    else
+                    {
+                        <button class="">Заглушка</button>
+                    }
+                </div>
             </div>
         </div>
         <div class="post-content">

@@ -59,5 +59,30 @@ namespace SimpleSocialMedia.Controllers
                 return BadRequest();
             }
         }
+
+        public async Task<IActionResult> Delete(long id)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            using (var serviceScope = ServiceActivator.GetScope())
+            {
+                var dataBase = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                if (dataBase == null)
+                {
+                    return StatusCode(500, "Database access failed.");
+                }
+
+                var post = await dataBase.Posts.FindAsync(id);
+                if (post != null)
+                {
+                    dataBase.Posts.Remove(post);
+                    await dataBase.SaveChangesAsync();
+                }
+                return Ok();
+            }
+        }
     }
 }

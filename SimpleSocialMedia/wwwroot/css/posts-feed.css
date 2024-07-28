@@ -39,10 +39,10 @@ textarea {
     transition: border-color 0.3s;
 }
 
-    textarea:focus {
-        border-color: #007BFF;
-        outline: none;
-    }
+textarea:focus {
+    border-color: #007BFF;
+    outline: none;
+}
 
 .sep {
     margin-top: 10px;
@@ -64,6 +64,7 @@ textarea {
     background-color: white;
     border-radius: 10px;
     padding: 20px;
+    padding-right: 40px;
     margin-bottom: 20px;
 }
 
@@ -71,6 +72,7 @@ textarea {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+    justify-content: space-between;
 }
 
 .post-avatar {
@@ -83,13 +85,19 @@ textarea {
 .post-info {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
+}
+
+.username-link {
+    pointer-events: none;
+    text-decoration: none;
 }
 
 .username {
     color: #000;
     font-weight: bold;
-    text-decoration: none;
     cursor: pointer;
+    pointer-events: auto;
 }
 
 .username:hover {
@@ -113,4 +121,42 @@ textarea {
 
 .like-toggle {
     cursor: pointer;
+}
+
+.post-menu {
+    position: relative;
+    margin: 0;
+}
+
+.post-menu-button {
+    margin-left: auto;
+}
+
+.post-menu-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    z-index: 1000;
+    display: none;
+}
+
+.post-menu-content button {
+    background: none;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 10px 20px;
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+}
+
+.post-menu-content button:hover {
+    background: #f0f0f0;
+    border-radius: 10px;
 }

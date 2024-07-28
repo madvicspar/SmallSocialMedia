@@ -70,6 +70,29 @@ $(document).on('click', '.like-toggle', function (e) {
 });
 
 $(document).on('click', '.username', function (e) {
-    var userId = $(this).data('user-id');
+    var userId = $(this).closest('.username-link').data('user-id');
     window.location.href = `/Users/Profile?userId=${userId}`;
+});
+
+$(document).on('click', '.post-menu-button', function (e) {
+    e.preventDefault();
+    var $menuContent = $(this).siblings('.post-menu-content');
+    $('.post-menu-content').not($menuContent).hide();
+    $menuContent.toggle();
+});
+
+$(document).on('click', '.delete-post', function (e) {
+    e.preventDefault();
+    var $postId = $(this).closest('.post').data('post-id');
+    $.ajax({
+        url: `/Posts/Delete`,
+        type: 'POST',
+        data: { id: $postId },
+        success: function (data) {
+            loadPosts();
+        },
+        error: function (data) {
+            alert('Ошибка при удалении поста');
+        }
+    });
 });
