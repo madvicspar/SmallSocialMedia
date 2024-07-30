@@ -11,12 +11,10 @@ namespace SimpleSocialMedia.Controllers
     public class UsersController : Controller
     {
         private readonly IWebHostEnvironment _env;
-        private string uploadsFolder;
 
         public UsersController(IWebHostEnvironment env)
         {
             _env = env;
-            uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "headers");
         }
 
         public async Task<IActionResult> Profile(string userId)
@@ -44,9 +42,13 @@ namespace SimpleSocialMedia.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(UserModel model, IFormFile headerPhoto)
+        public async Task<IActionResult> Edit(UserModel model, IFormFile headerPhoto, IFormFile avatarPhoto, string avatarPhotoUrl, string headerPhotoUrl)
         {
             ModelState.Remove(nameof(headerPhoto));
+            ModelState.Remove(nameof(avatarPhoto));
+            ModelState.Remove(nameof(headerPhotoUrl));
+            ModelState.Remove(nameof(avatarPhotoUrl));
+
             if (!ModelState.IsValid)
             {
                 return RedirectToAction("Profile", new { userId = model.Id });
@@ -60,51 +62,17 @@ namespace SimpleSocialMedia.Controllers
                     return NotFound();
                 }
 
-                // Находим пользователя по ID
                 var user = await dataBase.Users.FindAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
                 if (user == null)
                 {
                     return NotFound();
                 }
 
-                // Обновляем данные пользователя
-                user.FirstName = model.FirstName;
-                user.LastName = model.LastName;
-                user.Pathronymic = model.Pathronymic;
-                user.Email = model.Email;
-                user.Description = model.Description;
+                UpdateUserDetails(user, model);
 
-                // Обработка фото шапки
-                if (headerPhoto != null && headerPhoto.Length > 0)
-                {
-                    string uniqueFileName = await SaveFileAsync(headerPhoto);
+                user.HeaderUrl = await ProcessPhotoAsync(headerPhoto, headerPhotoUrl, user.HeaderUrl, "headers");
+                user.AvatarUrl = await ProcessPhotoAsync(avatarPhoto, avatarPhotoUrl, user.AvatarUrl, "avatars");
 
-                    if (uniqueFileName == null)
-                    {
-                        return StatusCode(500, "An error occurred while saving the file.");
-                    }
-
-                    try
-                    {
-                        if (!string.IsNullOrEmpty(user.HeaderUrl))
-                        {
-                            DeletePhoto(user.HeaderUrl);
-                        }
-                    }
-                    catch
-                    {
-                        DeletePhoto(uniqueFileName);
-                        return StatusCode(500, "An error occurred while uploading the header photo.");
-                    }
-
-                    user.HeaderUrl = uniqueFileName;
-                }
-                else if (!string.IsNullOrEmpty(user.HeaderUrl))
-                {
-                    user.HeaderUrl = null;
-                }
-
-                // Сохранение изменений в базе данных
                 dataBase.Update(user);
                 await dataBase.SaveChangesAsync();
 
@@ -113,16 +81,74 @@ namespace SimpleSocialMedia.Controllers
         }
 
         /// <summary>
+        /// Updates user data based on the provided model
+        /// </summary>
+        /// <param name="user">User to update</param>
+        /// <param name="model">Model with new user data</param>
+        private void UpdateUserDetails(UserModel user, UserModel model)
+        {
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Pathronymic = model.Pathronymic;
+            user.Email = model.Email;
+            user.Description = model.Description;
+        }
+
+        /// <summary>
+        /// Processes the uploaded photo: saves the new photo and deletes the old one if it exists
+        /// </summary>
+        /// <param name="photo">Uploaded photo</param>
+        /// <param name="currentUrl">Current photo URL</param>
+        /// <returns>New URL photo</returns>
+        private async Task<string> ProcessPhotoAsync(IFormFile photo, string url, string currentUrl, string folderName)
+        {
+            if (photo != null && photo.Length > 0 && url != null)
+            {
+                string newFileName = await SaveFileAsync(photo, folderName);
+
+                if (newFileName != null)
+                {
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(currentUrl))
+                        {
+                            DeletePhoto(currentUrl, folderName);
+                        }
+                        return newFileName;
+                    }
+                    catch
+                    {
+                        throw new Exception("An error occurred while processing the photo.");
+                    }
+                }
+                else
+                {
+                    throw new Exception("An error occurred while saving the photo.");
+                }
+            }
+            if (url != null && url.Split('/').Last() == currentUrl)
+            {
+                return currentUrl;
+            }
+            if (!string.IsNullOrEmpty(currentUrl))
+            {
+                DeletePhoto(currentUrl, folderName);
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Saves the uploaded file to the server and returns the unique file name.
         /// </summary>
         /// <param name="headerPhoto">The file to be saved.</param>
         /// <returns>The unique file name if the file is saved successfully; otherwise, null.</returns>
-        private async Task<string> SaveFileAsync(IFormFile headerPhoto)
+        private async Task<string> SaveFileAsync(IFormFile headerPhoto, string folderName)
         {
-            Directory.CreateDirectory(uploadsFolder);
+            var uploadFolder = Path.Combine(_env.WebRootPath, "uploads", folderName);
+            Directory.CreateDirectory(uploadFolder);
 
             string uniqueFileName = $"{User.FindFirstValue(ClaimTypes.NameIdentifier)}_{Guid.NewGuid()}{Path.GetExtension(headerPhoto.FileName)}";
-            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+            string filePath = Path.Combine(uploadFolder, uniqueFileName);
 
             try
             {
@@ -143,9 +169,9 @@ namespace SimpleSocialMedia.Controllers
         /// </summary>
         /// <param name="uniqueFileName">The unique file name of the partially uploaded file.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private void DeletePhoto(string fileName)
+        private void DeletePhoto(string fileName, string folderName)
         {
-            string filePath = Path.Combine(uploadsFolder, fileName);
+            string filePath = Path.Combine(_env.WebRootPath, "uploads", folderName, fileName);
             if (System.IO.File.Exists(filePath))
             {
                 System.IO.File.Delete(filePath);

@@ -1,8 +1,11 @@
 ﻿@model SimpleSocialMedia.Models.UserModel
+@using System.Security.Claims;
 
 @{
     ViewData["Title"] = Model.UserName;
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
     var defaultAvatarUrl = Url.Content("/images/default-user-pic.jpg");
+    var initialAvatarUrl = Url.Content("~/uploads/avatars/" + Model.AvatarUrl);
     var defaultHeaderPhotoUrl = Url.Content("~/images/default-user-header-pic.jpg");
     var initialHeaderPhotoUrl = Url.Content("~/uploads/headers/" + Model.HeaderUrl);
 }
@@ -12,15 +15,15 @@
     <link rel="stylesheet" href="~/css/posts-feed.css"/>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        var initialHeaderPhotoUrl = '@(initialHeaderPhotoUrl)';
+        var defaultAvatarUrl = '@(defaultAvatarUrl)';
         var defaultHeaderPhotoUrl = '@(defaultHeaderPhotoUrl)';
     </script>
 </head>
 
 <div class="profile-header">
-    <div class="header-photo" style="background-image: url(@Url.Content("~/uploads/headers/" + Model.HeaderUrl)), url(@Url.Content(defaultHeaderPhotoUrl));"></div>
+    <div class="header-photo" style="background-image: url(@initialHeaderPhotoUrl), url(@defaultHeaderPhotoUrl);"></div>
     <div class="header-info">
-        <img class="avatar" src="@(Model.AvatarUrl ?? defaultAvatarUrl)" alt="Фотография пользователя" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
+        <img class="avatar" src="@(initialAvatarUrl ?? defaultAvatarUrl)" alt="Фотография пользователя" onerror="this.onerror=null; this.src='@defaultAvatarUrl';" />
         <div class="user-info">
             <h2>@(Model.LastName + " " ?? "")@(Model.FirstName + " " ?? "")@(Model.Pathronymic ?? "")</h2>
             <p>
@@ -53,7 +56,7 @@
         </div>
         <div class="edit-header">
             <div class="edit-header-photo-container">
-                <div class="edit-header-photo" style="background-image: url(@Url.Content("~/uploads/headers/" + Model.HeaderUrl)), url(@Url.Content(defaultHeaderPhotoUrl));"></div>
+                <div class="edit-header-photo" style="background-image: url(@Url.Content(initialHeaderPhotoUrl)), url(@Url.Content(defaultHeaderPhotoUrl));"></div>
                 <div class="header-actions">
                     <div class="add-header-photo-container">
                         <img class="add-header-photo" src="~/images/add-photo.svg" alt="Add Header Photo"/>
@@ -67,7 +70,16 @@
                     </div>
                 </div>
             </div>
-            <img class="edit-avatar" src="@(Model.AvatarUrl ?? defaultAvatarUrl)" alt="Фотография пользователя" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
+            <div class="edit-avatar-container">
+                <img class="edit-avatar" src="@(initialAvatarUrl ?? defaultAvatarUrl)" alt="Фотография пользователя" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
+                <div class="avatar-menu-content" style="display: none;">
+                    @if (Model.Id == currentUserId)
+                    {
+                        <button class="update-avatar">Обновить фото</button>
+                        <button class="delete-avatar">Удалить фото</button>
+                    }
+                </div>
+            </div>
         </div>
         <form id="edit-profile-form" method="post" action="/Users/Edit" enctype="multipart/form-data">
             <div class="edit-container">
@@ -94,6 +106,11 @@
             </div>
 
             <input type="file" id="add-header-photo-input" name="headerPhoto" accept="image/*" style="display:none;" />
+            <input type="file" id="add-avatar-input" name="avatarPhoto" accept="image/*" style="display:none;" />
+
+            <!-- Эти скрытые поля будут использоваться для хранения URL, если нужны -->
+            <input type="hidden" id="header-photo-url" name="headerPhotoUrl" value="" />
+            <input type="hidden" id="avatar-photo-url" name="avatarPhotoUrl" value="" />
 
         </form>
     </div>

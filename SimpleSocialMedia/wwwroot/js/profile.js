@@ -32,10 +32,68 @@ $('#add-header-photo-input').on('change', function () {
 });
 
 $('.delete-header-photo-container').on('click', function () {
-    var backgroundImage = 'url(' + initialHeaderPhotoUrl + '), url(' + defaultHeaderPhotoUrl + ')';
-    $('.edit-header-photo').css('background-image', backgroundImage);
+    $('.edit-header-photo').css('background-image', 'url(' + defaultHeaderPhotoUrl + ')');
+});
+
+var isMenuVisible = false;
+
+$('.edit-avatar').on('mouseover', function () {
+    var $menuContent = $(this).siblings('.avatar-menu-content');
+    $('.avatar-menu-content').not($menuContent).hide();
+    $menuContent.show();
+    isMenuVisible = true;
+});
+
+$('.avatar-menu-content').on('mouseenter', function () {
+    isMenuVisible = true;
+});
+
+$('.edit-avatar, .edit-avatar-container, .avatar-menu-content').on('mouseleave', function () {
+    isMenuVisible = false;
+    setTimeout(function () {
+        if (!isMenuVisible) {
+            $('.avatar-menu-content').hide();
+        }
+    }, 100);
+});
+
+$('.update-avatar').on('click', function () {
+    $('#add-avatar-input').click();
+});
+
+$('#add-avatar-input').on('change', function () {
+    var input = this;
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $('.edit-avatar').attr('src', e.target.result);
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+});
+
+$('.delete-avatar').on('click', function () {
+    $('.edit-avatar').attr('src', defaultAvatarUrl);
 });
 
 $('.save-profile').on('click', function () {
+    var avatarUrl = $('.edit-avatar').attr('src');
+
+    if (avatarUrl !== defaultAvatarUrl) {
+        $('#avatar-photo-url').val(avatarUrl);
+    } else {
+        $('#avatar-photo-url').val(null);
+    }
+
+    var backgroundImage = $('.edit-header-photo').css('background-image');
+    var urls = backgroundImage.match(/url\(["']?(.*?)["']?\)/gi);
+    var headerUrl = urls ? urls[0].replace(/url\(["']?(.*?)["']?\)/i, '$1') : null;
+
+    if (headerUrl !== defaultHeaderPhotoUrl) {
+        $('#header-photo-url').val(headerUrl);
+    } else {
+        $('#header-photo-url').val(null);
+    }
+
     $('#edit-profile-form').submit();
 });
