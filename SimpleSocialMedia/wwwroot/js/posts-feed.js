@@ -81,6 +81,10 @@ $(document).on('click', '.post-menu-button', function (e) {
     $menuContent.toggle();
 });
 
+$(document).on('mouseleave', '.post-menu-content', function (e) {
+    $('.post-menu-content').hide();
+});
+
 $(document).on('click', '.delete-post', function (e) {
     e.preventDefault();
     var $postId = $(this).closest('.post').data('post-id');

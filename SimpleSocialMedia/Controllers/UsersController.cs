@@ -28,7 +28,7 @@ namespace SimpleSocialMedia.Controllers
                 }
 
                 var user = await dataBase.Users
-                .Include(u => u.Posts)
+                .Include(u => u.Posts.OrderByDescending(p => p.CreatedAt))
                 .ThenInclude(u => u.Likes)
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
