@@ -18,5 +18,7 @@ namespace SimpleSocialMedia.Models
         public string? AvatarUrl { get; set; }
         public string? HeaderUrl { get; set; }
         public virtual ICollection<PostModel>? Posts { get; set; }
+        public virtual ICollection<SubscriptionModel>? Followers { get; set; }
+        public virtual ICollection<SubscriptionModel>? FollowingUsers { get; set; }
     }
 }
