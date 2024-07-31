@@ -8,6 +8,7 @@
     var initialAvatarUrl = Url.Content("~/uploads/avatars/" + Model.AvatarUrl);
     var defaultHeaderPhotoUrl = Url.Content("~/images/default-user-header-pic.jpg");
     var initialHeaderPhotoUrl = Url.Content("~/uploads/headers/" + Model.HeaderUrl);
+    var isSubscribed = Model.Followers.Any(s => s.FollowerId == currentUserId);
 }
 
 <head>
@@ -34,7 +35,16 @@
             </p>
             <p>@Model.Description</p>
         </div>
-        <button class="edit-profile-button">Редактировать профиль</button>
+        @if (Model.Id == currentUserId)
+        {
+            <button class="edit-profile-button">Редактировать профиль</button>
+        }
+        else
+        {
+            <button class="subscribe-button @(isSubscribed ? "unsubscribe" : "subscribe")" data-user-id="@Model.Id">
+                @(isSubscribed ? "Отписаться" : "Подписаться")
+            </button>
+        }
     </div>
 </div>
 

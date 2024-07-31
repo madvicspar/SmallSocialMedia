@@ -28,6 +28,8 @@ namespace SimpleSocialMedia.Controllers
                 }
 
                 var user = await dataBase.Users
+                .Include(u => u.Followers)
+                .Include(u => u.FollowingUsers)
                 .Include(u => u.Posts.OrderByDescending(p => p.CreatedAt))
                 .ThenInclude(u => u.Likes)
                 .FirstOrDefaultAsync(u => u.Id == userId);
@@ -77,6 +79,72 @@ namespace SimpleSocialMedia.Controllers
                 await dataBase.SaveChangesAsync();
 
                 return RedirectToAction("Profile", new { userId = user.Id });
+            }
+        }
+
+        public async Task<IActionResult> Subscribe(string userId)
+        {
+            using (var serviceScope = ServiceActivator.GetScope())
+            {
+                var dataBase = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                if (dataBase == null)
+                {
+                    return NotFound();
+                }
+
+                var user = await dataBase.Users.FindAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                var followingUser = await dataBase.Users.FindAsync(userId);
+                if (followingUser == null)
+                {
+                    return NotFound();
+                }
+
+                var subs = new SubscriptionModel()
+                {
+                    Follower = user,
+                    FollowingUser = followingUser
+                };
+
+                await dataBase.Subscriptions.AddAsync(subs);
+                await dataBase.SaveChangesAsync();
+
+                return RedirectToAction("Profile", new { userId = followingUser.Id });
+            }
+        }
+
+        public async Task<IActionResult> Unsubscribe(string userId)
+        {
+            using (var serviceScope = ServiceActivator.GetScope())
+            {
+                var dataBase = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                if (dataBase == null)
+                {
+                    return NotFound();
+                }
+
+                var user = await dataBase.Users.FindAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                var followingUser = await dataBase.Users.FindAsync(userId);
+                if (followingUser == null)
+                {
+                    return NotFound();
+                }
+
+                var subs = await dataBase.Subscriptions.FirstOrDefaultAsync(s => s.FollowerId == user.Id && s.FollowingUserId == followingUser.Id);
+
+                dataBase.Remove(subs);
+                await dataBase.SaveChangesAsync();
+
+                return RedirectToAction("Profile", new { userId = followingUser.Id });
             }
         }
 

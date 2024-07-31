@@ -2,6 +2,35 @@
 var btn = $('.edit-profile-button');
 var span = $('.close');
 
+$('.subscribe-button').on('click', function () {
+    var $button = $(this);
+    var isSubscribed = $button.hasClass('unsubscribe');
+    var userId = $button.data("user-id");
+
+    var subscribeUrl = '/Users/Subscribe';
+    var unsubscribeUrl = '/Users/Unsubscribe';
+
+    var requestUrl = isSubscribed ? unsubscribeUrl : subscribeUrl;
+
+    $.ajax({
+        url: requestUrl,
+        type: 'POST',
+        data: { userId: userId },
+        success: function (response) {
+            if (isSubscribed) {
+                $button.removeClass('unsubscribe').addClass('subscribe');
+                $button.text('Подписаться');
+            } else {
+                $button.removeClass('subscribe').addClass('unsubscribe');
+                $button.text('Отписаться');
+            }
+        },
+        error: function () {
+            alert('Произошла ошибка при выполнении запроса. Попробуйте еще раз.');
+        }
+    });
+});
+
 btn.on('click', function () {
     modal.show();
 });
