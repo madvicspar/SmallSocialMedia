@@ -16,6 +16,12 @@
     <button class="new-post-button">Опубликовать</button>
 </div>
 
+@if (Model.Count() == 0)
+{
+    <div style="background-color: white; height: 80px; border-radius: 10px; display: flex; justify-content: center; align-items: center;">
+        <h5 style="text-align: center;">Подпишитесь на кого-нибудь, чтобы тут были новости</h5>
+    </div>
+}
 @foreach (var post in Model)
 {
     <div class="post" data-post-id="@post.Id">

@@ -13,7 +13,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
-<h1>Лента новостей</h1>
+<div class="tabs">
+    <button class="tab-link active" data-type="my-news">Мои новости</button>
+    <button class="tab-link" data-type="popular">Популярное</button>
+</div>
 
 <div class="post-feed">
     @await Html.PartialAsync("_PostsListPartial", Model)
