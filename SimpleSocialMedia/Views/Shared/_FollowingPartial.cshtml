@@ -1,0 +1,36 @@
+﻿@model ICollection<SimpleSocialMedia.Models.SubscriptionModel>
+
+@if (Model.Count() == 0)
+{
+    <div style="background-color: white; height: 80px; border-radius: 10px; display: flex; justify-content: center; align-items: center;">
+        <h5 style="text-align: center;">Вы пока ни на кого не подписаны :(</h5>
+    </div>
+}
+
+@{
+    var defaultAvatarUrl = Url.Content("~/images/default-user-pic.jpg");
+}
+
+@foreach (var subscription in Model)
+{
+    var user = subscription.FollowingUser;
+    var currentUserId = subscription.FollowerId;
+    bool isSubscribed = Model.Any(s => s.FollowerId == currentUserId && s.FollowingUser.Id == user.Id);
+    var userAvatarUrl = Url.Content("~/uploads/avatars/" + (user.AvatarUrl ?? "default-user-pic.jpg"));
+    <div class="user-card" data-user-id="@user.Id">
+        <div class="user-info">
+            <img class="avatar" src="@(userAvatarUrl)" alt="Фотография пользователя" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';"/>
+            <div class="user-details">
+                <p class="name">@user.LastName @user.FirstName</p>
+                <p class="username">@user.UserName</p>
+                <p class="description">@user.Description</p>
+            </div>
+        </div>
+        <div class="user-actions">
+            <button class="subscribe-button @(isSubscribed ? "unsubscribe" : "subscribe")" data-user-id="@user.Id">
+                @(isSubscribed ? "Отписаться" : "Подписаться")
+            </button>
+        </div>
+    </div>
+    <hr class="divider" />
+}

@@ -1,0 +1,36 @@
+﻿@model SimpleSocialMedia.Models.UserModel
+
+@{
+    var tab = ViewBag.Tab as string ?? "followers";
+    var currentUserId = Model.Id;
+    ViewData["Title"] = tab == "followers" ? "Подписчики" : "Подписки";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/subscriptions.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        var currentUserId = '@(currentUserId)';
+        var tab = '@(tab)';
+    </script>
+</head>
+
+<div class="main">
+    <div class="header">
+        <div class="header-info">
+            <img src="~/images/left-arrow.svg" class="back-button" />
+            <div class="current-user-info">
+                <p class="current-user-name">@(Model.LastName + " " ?? "")@(Model.FirstName + " " ?? "")@(Model.Pathronymic ?? "")</p>
+                <p class="current-user-username">@(Model.UserName)</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="tab-link @(tab == "followers" ? "active" : "")" data-type="followers" onclick="loadTab('followers')">Подписчики</button>
+            <button class="tab-link @(tab == "following" ? "active" : "")" data-type="following" onclick="loadTab('following')">Подписки</button>
+        </div>
+    </div>
+    <hr class="divider" />
+    <div id="users-list" class="users-list" />
+</div>
+
+<script src="~/js/subscriptions.js"></script>

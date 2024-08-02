@@ -44,6 +44,28 @@
     justify-content: flex-start;
 }
 
+.subscriptions-data {
+    display: flex;
+    gap: 10px;
+}
+
+.subscriptions-data a {
+    color: gray;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.subscriptions-data a .count {
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.subscriptions-data a:hover {
+    text-decoration: underline;
+    color: black;
+}
+
 .edit-profile-button {
     position: absolute;
     top: 20px;

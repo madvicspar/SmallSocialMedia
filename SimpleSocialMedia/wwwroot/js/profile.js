@@ -31,6 +31,14 @@ $('.subscribe-button').on('click', function () {
     });
 });
 
+$(document).on('click', '.followers-link, .following-link', function (e) {
+    e.preventDefault();
+
+    var userId = $(this).data('user-id');
+    var linkType = $(this).hasClass('followers-link') ? 'followers' : 'following';
+    window.location.href = `/Users/Subscriptions?userId=${userId}&type=${linkType}`;
+});
+
 btn.on('click', function () {
     modal.show();
 });

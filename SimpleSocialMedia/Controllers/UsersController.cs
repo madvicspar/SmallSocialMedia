@@ -148,6 +148,88 @@ namespace SimpleSocialMedia.Controllers
             }
         }
 
+        public async Task<IActionResult> LoadUsers(string type, string userId)
+        {
+            List<SubscriptionModel> users;
+            if (type == "followers")
+            {
+                users = await GetFollowers(userId);
+                return PartialView("_FollowersPartial", users);
+            }
+            else if (type == "following")
+            {
+                users = await GetFollowing(userId);
+                return PartialView("_FollowingPartial", users);
+            }
+            return BadRequest();
+        }
+
+        private async Task<List<SubscriptionModel>> GetFollowers(string userId)
+        {
+            using (var serviceScope = ServiceActivator.GetScope())
+            {
+                var dataBase = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                if (dataBase == null)
+                {
+                    return new List<SubscriptionModel>();
+                }
+
+                var user = await dataBase.Users
+                    .Include(u => u.Followers)
+                    .ThenInclude(u => u.Follower)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+                if (user == null)
+                {
+                    return new List<SubscriptionModel>();
+                }
+
+                return user.Followers.ToList();
+            }
+        }
+
+        private async Task<List<SubscriptionModel>> GetFollowing(string userId)
+        {
+            using (var serviceScope = ServiceActivator.GetScope())
+            {
+                var dataBase = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                if (dataBase == null)
+                {
+                    return new List<SubscriptionModel>();
+                }
+
+                var user = await dataBase.Users
+                    .Include(u => u.FollowingUsers)
+                    .ThenInclude(x => x.FollowingUser)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+                if (user == null)
+                {
+                    return new List<SubscriptionModel>();
+                }
+
+                return user.FollowingUsers.ToList();
+            }
+        }
+
+        public async Task<IActionResult> Subscriptions(string userId, string type)
+        {
+            using (var serviceScope = ServiceActivator.GetScope())
+            {
+                var dataBase = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                if (dataBase == null)
+                {
+                    return NotFound();
+                }
+                var user = await dataBase.Users
+                    .Include(u => u.Followers)
+                    .ThenInclude(x => x.Follower)
+                    .Include(u => u.FollowingUsers)
+                    .ThenInclude(x => x.FollowingUser)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+                ViewBag.Tab = type;
+                return View(user);
+            }
+        }
+
         /// <summary>
         /// Updates user data based on the provided model
         /// </summary>

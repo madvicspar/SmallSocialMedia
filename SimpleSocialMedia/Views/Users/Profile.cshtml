@@ -1,4 +1,5 @@
 ﻿@model SimpleSocialMedia.Models.UserModel
+@using SimpleSocialMedia.Utilities;
 @using System.Security.Claims;
 
 @{
@@ -34,17 +35,30 @@
                 }
             </p>
             <p>@Model.Description</p>
+
+            <div class="subscriptions-data">
+                <a class="followers-link" data-user-id="@Model.Id">
+                    <span class="count">@Model.Followers.Count() </span>
+                    @CaseDeclensioner.GetFollowersText(Model.Followers.Count())
+                </a>
+                <a class="following-link" data-user-id="@Model.Id">
+                    <span class="count">@Model.FollowingUsers.Count() </span>
+                    @CaseDeclensioner.GetFollowingUsersText(Model.FollowingUsers.Count())
+                </a>
+            </div>
         </div>
-        @if (Model.Id == currentUserId)
-        {
-            <button class="edit-profile-button">Редактировать профиль</button>
-        }
-        else
-        {
-            <button class="subscribe-button @(isSubscribed ? "unsubscribe" : "subscribe")" data-user-id="@Model.Id">
-                @(isSubscribed ? "Отписаться" : "Подписаться")
-            </button>
-        }
+        <div class="user-actions">
+            @if (Model.Id == currentUserId)
+            {
+                <button class="edit-profile-button">Редактировать профиль</button>
+            }
+            else
+            {
+                <button class="subscribe-button @(isSubscribed ? "unsubscribe" : "subscribe")" data-user-id="@Model.Id">
+                    @(isSubscribed ? "Отписаться" : "Подписаться")
+                </button>
+            }
+        </div>
     </div>
 </div>
 
