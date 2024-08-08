@@ -62,5 +62,6 @@ namespace SimpleSocialMedia.Utilities.Data
         public virtual DbSet<LikeModel> Likes { get; set; } = null!;
         public virtual DbSet<PhotoModel> Photos { get; set; } = null!;
         public virtual DbSet<SubscriptionModel> Subscriptions { get; set; } = null!;
+        public virtual DbSet<CommentModel> Comments { get; set; } = null!;
     }
 }
