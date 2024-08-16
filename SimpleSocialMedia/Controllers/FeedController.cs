@@ -44,6 +44,8 @@ namespace SimpleSocialMedia.Controllers
                 var posts = await dataBase.Posts
                     .Where(p => followedUserIds.Contains(p.UserId))
                     .Include(p => p.User)
+                    .Include(p => p.Comments)
+                    .ThenInclude(c => c.User)
                     .Include(p => p.Likes)
                     .ThenInclude(l => l.User)
                     .OrderByDescending(p => p.CreatedAt)
@@ -66,6 +68,8 @@ namespace SimpleSocialMedia.Controllers
                 var posts = await dataBase.Posts
                     .Where(x => x.UserId != user.Id)
                     .Include(p => p.User)
+                    .Include(p => p.Comments)
+                    .ThenInclude(c => c.User)
                     .Include(p => p.Likes)
                     .ThenInclude(l => l.User)
                     .OrderByDescending(p => p.CreatedAt)

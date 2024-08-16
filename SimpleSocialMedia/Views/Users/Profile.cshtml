@@ -1,15 +1,18 @@
 ﻿@model SimpleSocialMedia.Models.UserModel
 @using SimpleSocialMedia.Utilities;
 @using System.Security.Claims;
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<SimpleSocialMedia.Models.UserModel> UserManager;
 
 @{
     ViewData["Title"] = Model.UserName;
-    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var currentUser = await UserManager.GetUserAsync(User);
     var defaultAvatarUrl = Url.Content("/images/default-user-pic.jpg");
     var initialAvatarUrl = Url.Content("~/uploads/avatars/" + Model.AvatarUrl);
     var defaultHeaderPhotoUrl = Url.Content("~/images/default-user-header-pic.jpg");
     var initialHeaderPhotoUrl = Url.Content("~/uploads/headers/" + Model.HeaderUrl);
-    var isSubscribed = Model.Followers.Any(s => s.FollowerId == currentUserId);
+    var isSubscribed = Model.Followers.Any(s => s.FollowerId == currentUser.Id);
+    ViewData["IsCurrentUser"] = Model.Id == currentUser.Id;
 }
 
 <head>
@@ -48,7 +51,7 @@
             </div>
         </div>
         <div class="user-actions">
-            @if (Model.Id == currentUserId)
+            @if (Model.Id == currentUser.Id)
             {
                 <button class="edit-profile-button">Редактировать профиль</button>
             }
@@ -97,7 +100,7 @@
             <div class="edit-avatar-container">
                 <img class="edit-avatar" src="@(initialAvatarUrl ?? defaultAvatarUrl)" alt="Фотография пользователя" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
                 <div class="avatar-menu-content" style="display: none;">
-                    @if (Model.Id == currentUserId)
+                    @if (Model.Id == currentUser.Id)
                     {
                         <button class="update-avatar">Обновить фото</button>
                         <button class="delete-avatar">Удалить фото</button>

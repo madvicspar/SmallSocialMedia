@@ -363,5 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Ignore uploaded header photos
-/SimpleSocialMedia/wwwroot/uploads/headers
+/SimpleSocialMedia/wwwroot/uploads/
 /SimpleSocialMedia/appsettings.json

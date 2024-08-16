@@ -31,7 +31,10 @@ namespace SimpleSocialMedia.Controllers
                 .Include(u => u.Followers)
                 .Include(u => u.FollowingUsers)
                 .Include(u => u.Posts.OrderByDescending(p => p.CreatedAt))
-                .ThenInclude(u => u.Likes)
+                    .ThenInclude(u => u.Likes)
+                .Include(u => u.Posts.OrderByDescending(p => p.CreatedAt))
+                    .ThenInclude(p => p.Comments)
+                        .ThenInclude(c => c.User)
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
                 if (user == null)

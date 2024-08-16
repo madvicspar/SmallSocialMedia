@@ -22,6 +22,8 @@ namespace SimpleSocialMedia.Controllers
                 }
                 var posts = await dataBase.Posts
                     .Include(p => p.User)
+                    .Include(p => p.Comments)
+                    .ThenInclude(c => c.User)
                     .Include(p => p.Likes)
                     .ThenInclude(l => l.User)
                     .OrderByDescending(p => p.CreatedAt)

@@ -29,7 +29,7 @@ $(document).on('click', '.new-post-button', function (e) {
 
 function loadPosts() {
     $.ajax({
-        url: '/Posts/Get',
+        url: '/Feed/GetMyNewsTab',
         type: 'GET',
         success: function (response) {
             $('.post-feed').html(response);
