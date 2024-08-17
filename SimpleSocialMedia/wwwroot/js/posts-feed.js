@@ -100,3 +100,54 @@ $(document).on('click', '.delete-post', function (e) {
         }
     });
 });
+
+$(document).on('click', '.new-comment-button', function (e) {
+    e.preventDefault();
+    var $post = $(this).closest('.post');
+    var postId = $post.data('post-id');
+    var content = $('#new-comment-content').val();
+
+    $.ajax({
+        url: `/Comments/Add`,
+        type: 'POST',
+        data: {
+            content: content,
+            postId: postId
+        },
+        success: function (data) {
+            $('#new-comment-content').val('');
+            $post.find('.existing-comments').html(data);
+        },
+        error: function (data) {
+            alert('Ошибка при добавлении комментария');
+        }
+    });
+});
+
+$(document).on('click', '.comment-menu-button', function (e) {
+    e.preventDefault();
+    var $menuContent = $(this).siblings('.comment-menu-content');
+    $('.comment-menu-content').not($menuContent).hide();
+    $menuContent.toggle();
+});
+
+$(document).on('mouseleave', '.comment-menu-content', function (e) {
+    $('.comment-menu-content').hide();
+});
+
+$(document).on('click', '.delete-comment', function (e) {
+    e.preventDefault();
+    var $post = $(this).closest('.post');
+    var $commentId = $(this).data('id');
+    $.ajax({
+        url: `/Comments/Delete`,
+        type: 'POST',
+        data: { id: $commentId },
+        success: function (data) {
+            $post.find('.existing-comments').html(data);
+        },
+        error: function (data) {
+            alert('Ошибка при удалении комментария');
+        }
+    });
+});

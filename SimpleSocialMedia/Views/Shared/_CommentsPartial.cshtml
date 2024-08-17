@@ -1,0 +1,43 @@
+﻿@model IEnumerable<CommentModel>
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<SimpleSocialMedia.Models.UserModel> UserManager;
+
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+}
+
+@foreach (var comment in Model)
+{
+    <div class="comment" data-comment-id="@comment.Id">
+        <div class="comment-header">
+            <img class="comment-avatar" src="@(Url.Content("~/uploads/avatars/" + (comment.User.AvatarUrl ?? "default-user-pic.jpg")))" alt="Фото профиля" onerror="this.onerror=null; this.src='@(Url.Content("~/images/default-user-pic.jpg"))';" />
+            <div class="comment-info">
+                <a class="username-link" data-user-id="@comment.User.Id">
+                    <span class="username">@comment.User.UserName</span>
+                </a>
+                <span class="created-at">@comment.CreatedAt.ToString("g")</span>
+            </div>
+            <div class="comment-menu">
+                <button class="comment-menu-button" style="background: none; border: none; cursor: pointer; padding: 0;">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" role="img" class="icon" style="color: rgb(15, 20, 25); width: 24px; height: 24px;">
+                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                    </svg>
+                </button>
+                <div class="comment-menu-content" style="display: none;">
+                    @if (comment.User.Id == currentUser.Id)
+                    {
+                        <button class="delete-comment" data-id="@comment.Id">Удалить</button>
+                    }
+                    else
+                    {
+                        <button class="">Заглушка</button>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="comment-content">
+            <p>@comment.Content</p>
+        </div>
+    </div>
+    <hr class="comments-delimiter" />
+}

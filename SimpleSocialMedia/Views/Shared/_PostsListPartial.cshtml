@@ -75,35 +75,19 @@
                 </div>
             </div>
         </div>
+        <hr class="post-content-delimiter" />
         <div class="post-comments">
             <div class="existing-comments">
-                @if (post.Comments.Count > 0)
-                {
-                    <hr class="post-content-delimiter"/>
-                    var comments = post.Comments.ToList();
-                    for (int i = 0; i < comments.Count; i++)
-                    {
-                        var comment = comments[i];
-                        <div class="comment" data-comment-id="@comment.Id">
-                            <div class="comment-header">
-                                <img class="comment-avatar" src="@(Url.Content(avatarsPath + comment.User.AvatarUrl) ?? defaultAvatarUrl)" alt="Фото профиля" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
-                                <div class="comment-info">
-                                    <a class="username-link" data-user-id="@comment.User.Id">
-                                        <span class="username">@comment.User.UserName</span>
-                                    </a>
-                                    <span class="created-at">@comment.CreatedAt.ToString("g")</span>
-                                </div>
-                            </div>
-                            <div class="comment-content">
-                                <p>@comment.Content</p>
-                            </div>
-                        </div>
-                        if (i < comments.Count - 1)
-                        {
-                            <hr class="comments-delimiter" />
-                        }
-                    }
-                }
+                @await Html.PartialAsync("_CommentsPartial", post.Comments)
+            </div>
+            <div class="new-comment">
+                <div class="new-comment-header">
+                    <img class="comment-avatar" src="@(Url.Content(avatarsPath + currentUser.AvatarUrl) ?? defaultAvatarUrl)" alt="Avatar" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
+                    <form id="new-comment-form" class="new-comment-form">
+                        <textarea id="new-comment-content" name="content" placeholder="Введите текст..." rows="4" required></textarea>
+                    </form>
+                </div>
+                <img class="new-comment-button" src="~/images/send.svg" />
             </div>
         </div>
     </div>

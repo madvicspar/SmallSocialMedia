@@ -130,16 +130,16 @@ textarea:focus {
     cursor: pointer;
 }
 
-.post-menu {
+.post-menu, .comment-menu {
     position: relative;
     margin: 0;
 }
 
-.post-menu-button {
+.post-menu-button, .comment-menu-button {
     margin-left: auto;
 }
 
-.post-menu-content {
+.post-menu-content, .comment-menu-content {
     position: absolute;
     top: 0;
     right: 0;
@@ -152,7 +152,7 @@ textarea:focus {
     display: none;
 }
 
-.post-menu-content button {
+.post-menu-content button, .comment-menu-content button {
     background: none;
     border: none;
     border-radius: 10px;
@@ -163,7 +163,7 @@ textarea:focus {
     font-size: 14px;
 }
 
-.post-menu-content button:hover {
+.post-menu-content button:hover, .comment-menu-content button:hover {
     background: #f0f0f0;
     border-radius: 10px;
 }
@@ -171,11 +171,8 @@ textarea:focus {
 .post-comments {
     margin: 0;
     padding: 0;
-    justify-content: space-between;
-}
-
-.comment {
     padding-top: 10px;
+    justify-content: space-between;
 }
 
 .comment-header {
@@ -203,6 +200,8 @@ textarea:focus {
 }
 
 .comments-delimiter {
+    margin: 0;
+    margin-bottom: 10px;
     margin-left: 40px;
     padding: 0;
 }
@@ -215,4 +214,46 @@ hr {
 
 .post-content-delimiter {
     margin: 0;
+}
+
+.new-comment {
+    background: #fff;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.new-comment-header {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.new-comment-form {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.new-comment-form textarea {
+    width: 100%;
+    resize: vertical;
+    min-height: 35px;
+    max-height: 150px;
+    height: 35px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    vertical-align: middle;
+    padding: 5px;
+    font-size: 14px;
+    overflow-y: auto;
+}
+
+.new-comment-button {
+    border: none;
+    cursor: pointer;
+    height: 20px;
+    width: 20px;
+    margin-left: 5px;
 }
