@@ -31,6 +31,30 @@ $('.subscribe-button').on('click', function () {
     });
 });
 
+$('.tab-link').on('click', function () {
+    $('.tab-link').removeClass('active');
+    $(this).addClass('active');
+
+    var type = $(this).data('type');
+    var contentContainer = type === "my-posts" ? ".post-feed" : ".comments";
+
+    $('.tab-content > div').hide();
+    $(contentContainer).show();
+
+    $.ajax({
+        url: `/Users/${type === "my-posts" ? "GetMyPostsTab" : "GetMyCommentsTab"}`,
+        method: 'GET',
+        data: { userId: $(this).closest('.tabs').data('user-id') },
+        success: function (data) {
+            $(contentContainer).html(data);
+        },
+        error: function () {
+            alert('Произошла ошибка при загрузке данных.');
+        }
+    });
+});
+
+
 $(document).on('click', '.followers-link, .following-link', function (e) {
     e.preventDefault();
 

@@ -35,6 +35,7 @@ namespace SimpleSocialMedia.Controllers
                 .Include(u => u.Posts.OrderByDescending(p => p.CreatedAt))
                     .ThenInclude(p => p.Comments)
                         .ThenInclude(c => c.User)
+                .Include(u => u.Comments.OrderByDescending(c => c.CreatedAt))
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
                 if (user == null)
@@ -43,6 +44,65 @@ namespace SimpleSocialMedia.Controllers
                 }
 
                 return View(user);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserPostsTab(string userId)
+        {
+            using (var serviceScope = ServiceActivator.GetScope())
+            {
+                var dataBase = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                if (dataBase == null)
+                {
+                    return NotFound();
+                }
+
+                var posts = await dataBase.Posts.OrderByDescending(p => p.CreatedAt)
+                    .Include(p => p.User)
+                    .Include(p => p.Likes)
+                    .Include(p => p.Comments)
+                    .ThenInclude(c => c.User)
+                    .Where(u => u.UserId == userId).ToListAsync();
+
+                if (posts == null)
+                {
+                    return NotFound();
+                }
+
+                ViewData["IsNewPostDisplay"] = userId == User.FindFirstValue(ClaimTypes.NameIdentifier);
+                ViewData["ShowEmptyMessage"] = true;
+
+                return PartialView("_PostsListPartial", posts);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserCommentsTab(string userId)
+        {
+            using (var serviceScope = ServiceActivator.GetScope())
+            {
+                var dataBase = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                if (dataBase == null)
+                {
+                    return NotFound();
+                }
+
+                var comments = await dataBase.Comments
+                    .Include(c => c.User)
+                    .Include(c => c.Post)
+                        .ThenInclude(p => p.User)
+                    .Where(c => c.UserId == userId)
+                    .ToListAsync();
+
+                if (comments == null)
+                {
+                    return NotFound();
+                }
+
+                ViewData["ShowEmptyMessage"] = true;
+
+                return PartialView("_CommentsPartial", comments);
             }
         }
 

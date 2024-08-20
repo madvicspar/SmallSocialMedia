@@ -20,5 +20,9 @@ namespace SimpleSocialMedia.Models
         public virtual ICollection<PostModel>? Posts { get; set; }
         public virtual ICollection<SubscriptionModel>? Followers { get; set; }
         public virtual ICollection<SubscriptionModel>? FollowingUsers { get; set; }
+        /// <summary>
+        /// Comments left by the user
+        /// </summary>
+        public virtual ICollection<CommentModel>? Comments { get; set; }
     }
 }

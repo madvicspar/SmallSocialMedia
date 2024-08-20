@@ -15,20 +15,23 @@ namespace SimpleSocialMedia.Controllers
         // GET: Feed
         public async Task<IActionResult> Index()
         {
-            return View(await GetMyNews());
+            ViewData["IsNewPostDisplay"] = true;
+            return View(await GetNews());
         }
 
-        public async Task<IActionResult> GetMyNewsTab()
+        public async Task<IActionResult> GetNewsTab()
         {
-            return PartialView("_PostsListPartial", await GetMyNews());
+            ViewData["IsNewPostDisplay"] = true;
+            return PartialView("_PostsListPartial", await GetNews());
         }
 
         public async Task<IActionResult> GetPopularPostsTab()
         {
+            ViewData["IsNewPostDisplay"] = false;
             return PartialView("_PostsListPartial", await GetPopularPosts());
         }
 
-        public async Task<List<PostModel>> GetMyNews()
+        public async Task<List<PostModel>> GetNews()
         {
             using (var serviceScope = ServiceActivator.GetScope())
             {

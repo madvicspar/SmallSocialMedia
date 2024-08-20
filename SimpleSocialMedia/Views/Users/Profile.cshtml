@@ -12,7 +12,8 @@
     var defaultHeaderPhotoUrl = Url.Content("~/images/default-user-header-pic.jpg");
     var initialHeaderPhotoUrl = Url.Content("~/uploads/headers/" + Model.HeaderUrl);
     var isSubscribed = Model.Followers.Any(s => s.FollowerId == currentUser.Id);
-    ViewData["IsCurrentUser"] = Model.Id == currentUser.Id;
+    ViewData["IsNewPostDisplay"] = Model.Id == currentUser.Id;
+    ViewData["ShowEmptyMessage"] = true;
 }
 
 <head>
@@ -65,8 +66,19 @@
     </div>
 </div>
 
-<div class="post-feed">
-    @await Html.PartialAsync("_PostsListPartial", Model.Posts)
+<div class="tabs" data-user-id=@Model.Id>
+    <button class="tab-link active" data-type="my-posts">Публикации</button>
+    <button class="tab-link" data-type="my-comments">Комментарии</button>
+</div>
+
+<div class="tab-content">
+    <div class="post-feed active">
+        @await Html.PartialAsync("_PostsListPartial", Model.Posts)
+    </div>
+
+    <div class="comments" style="display: none; background-color: white; border-radius: 10px; padding: 20px;">
+        @await Html.PartialAsync("_CommentsPartial", Model.Comments)
+    </div>
 </div>
 
 <!-- Modal -->

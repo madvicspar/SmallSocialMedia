@@ -6,7 +6,8 @@
     var defaultAvatarUrl = Url.Content("~/images/default-user-pic.jpg");
     var currentUser = await UserManager.GetUserAsync(User);
     var avatarsPath = "~/uploads/avatars/";
-    var isNewPostDisplay = ViewData["IsCurrentUser"] == null || (bool)ViewData["IsCurrentUser"];
+    var isNewPostDisplay = ViewData["IsNewPostDisplay"] != null && (bool)ViewData["IsNewPostDisplay"];
+    var isProfilePage = ViewData["ShowEmptyMessage"] != null && (bool)ViewData["ShowEmptyMessage"];
 }
 
 @if (isNewPostDisplay)
@@ -25,70 +26,85 @@
 
 @if (Model.Count() == 0)
 {
-    <div style="background-color: white; height: 80px; border-radius: 10px; display: flex; justify-content: center; align-items: center;">
-        <h5 style="text-align: center;">Подпишитесь на кого-нибудь, чтобы тут были новости</h5>
-    </div>
+    @if (isProfilePage)
+    {
+        <div style="background-color: white; height: 80px; border-radius: 10px; display: flex; justify-content: center; align-items: center;">
+            <h5 style="text-align: center;">Пользователь еще не выложил ни одного поста</h5>
+        </div>
+    }
+    else
+    {
+        <div style="background-color: white; height: 80px; border-radius: 10px; display: flex; justify-content: center; align-items: center;">
+            <h5 style="text-align: center;">Подпишитесь на кого-нибудь, чтобы тут были новости</h5>
+        </div>
+    }
 }
-@foreach (var post in Model)
+else
 {
-    <div class="post" data-post-id="@post.Id">
-        <div class="post-header">
-            <img class="post-avatar" src="@(Url.Content(avatarsPath + post.User.AvatarUrl) ?? defaultAvatarUrl)" alt="Avatar" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
-            <div class="post-info">
-                <a class="username-link" data-user-id="@post.User.Id">
-                    <span class="username">@post.User.UserName</span>
-                </a>
-                <span class="created-at">@post.CreatedAt.ToString("g")</span>
+    @foreach (var post in Model)
+    {
+        <div class="post" data-post-id="@post.Id">
+            <div class="post-header">
+                <img class="post-avatar" src="@(Url.Content(avatarsPath + post.User.AvatarUrl) ?? defaultAvatarUrl)" alt="Avatar" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
+                <div class="post-info">
+                    <a class="username-link" data-user-id="@post.User.Id">
+                        <span class="username">@post.User.UserName</span>
+                    </a>
+                    <span class="created-at">@post.CreatedAt.ToString("g")</span>
+                </div>
+                <div class="post-menu">
+                    <button class="post-menu-button" style="background: none; border: none; cursor: pointer; padding: 0;">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" role="img" class="icon" style="color: rgb(15, 20, 25); width: 24px; height: 24px;">
+                            <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                        </svg>
+                    </button>
+                    <div class="post-menu-content" style="display: none;">
+                        @if (post.User.Id == currentUser.Id)
+                        {
+                            <button class="delete-post">Удалить</button>
+                            <button class="">Еще одна заглушка</button>
+                        }
+                        else
+                        {
+                            <button class="">Заглушка</button>
+                        }
+                    </div>
+                </div>
             </div>
-            <div class="post-menu">
-                <button class="post-menu-button" style="background: none; border: none; cursor: pointer; padding: 0;">
-                    <svg viewBox="0 0 24 24" aria-hidden="true" role="img" class="icon" style="color: rgb(15, 20, 25); width: 24px; height: 24px;">
-                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                    </svg>
-                </button>
-                <div class="post-menu-content" style="display: none;">
-                    @if (post.User.Id == currentUser.Id)
-                    {
-                        <button class="delete-post">Удалить</button>
-                        <button class="">Еще одна заглушка</button>
+            <div class="post-content">
+                <p>@post.Content</p>
+            </div>
+            <div class="post-actions">
+                <div class="likes">
+                    <div class="like-actions-pic">
+                        <img src="~/images/@(post.Likes.Any(l => l.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier)) ? "liked.svg" : "not-liked.svg")" height="30px" class="like-toggle" />
+                    </div>
+                    <span class="likes-count">@post.Likes.Count</span>
+                </div>
+                <div class="comments-action">
+                    <div class="comment-actions-pic">
+                        <img src="~/images/comments.svg" height="30px" class="comment-toggle" />
+                    </div>
+                </div>
+            </div>
+            <hr class="post-content-delimiter" />
+            <div class="post-comments">
+                <div class="existing-comments">
+                    @{
+                        ViewData["ShowEmptyMessage"] = false;
                     }
-                    else
-                    {
-                        <button class="">Заглушка</button>
-                    }
+                    @await Html.PartialAsync("_CommentsPartial", post.Comments)
+                </div>
+                <div class="new-comment">
+                    <div class="new-comment-header">
+                        <img class="comment-avatar" src="@(Url.Content(avatarsPath + currentUser.AvatarUrl) ?? defaultAvatarUrl)" alt="Avatar" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
+                        <form id="new-comment-form" class="new-comment-form">
+                            <textarea id="new-comment-content" name="content" placeholder="Введите текст..." rows="4" required></textarea>
+                        </form>
+                    </div>
+                    <img class="new-comment-button" src="~/images/send.svg" />
                 </div>
             </div>
         </div>
-        <div class="post-content">
-            <p>@post.Content</p>
-        </div>
-        <div class="post-actions">
-            <div class="likes">
-                <div class="like-actions-pic">
-                    <img src="~/images/@(post.Likes.Any(l => l.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier)) ? "liked.svg" : "not-liked.svg")" height="30px" class="like-toggle" />
-                </div>
-                <span class="likes-count">@post.Likes.Count</span>
-            </div>
-            <div class="comments">
-                <div class="comment-actions-pic">
-                    <img src="~/images/comments.svg" height="30px" class="comment-toggle" />
-                </div>
-            </div>
-        </div>
-        <hr class="post-content-delimiter" />
-        <div class="post-comments">
-            <div class="existing-comments">
-                @await Html.PartialAsync("_CommentsPartial", post.Comments)
-            </div>
-            <div class="new-comment">
-                <div class="new-comment-header">
-                    <img class="comment-avatar" src="@(Url.Content(avatarsPath + currentUser.AvatarUrl) ?? defaultAvatarUrl)" alt="Avatar" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
-                    <form id="new-comment-form" class="new-comment-form">
-                        <textarea id="new-comment-content" name="content" placeholder="Введите текст..." rows="4" required></textarea>
-                    </form>
-                </div>
-                <img class="new-comment-button" src="~/images/send.svg" />
-            </div>
-        </div>
-    </div>
+    }
 }
