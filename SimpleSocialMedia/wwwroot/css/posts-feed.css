@@ -48,15 +48,32 @@ textarea:focus {
     margin-top: 10px;
 }
 
-.new-post-button {
+.new-post-button, .save-post-button {
     align-self: flex-end;
     background-color: rgb(29, 155, 240);
-    border: none;
+    border: 2px solid transparent;
     border-radius: 50px;
     color: white;
     cursor: pointer;
     font-weight: bold;
     padding: 10px 20px;
+}
+
+.cancel-edit-button {
+    align-self: flex-end;
+    background-color: white;
+    border: 2px solid rgb(29, 155, 240);
+    border-radius: 50px;
+    color: rgb(29, 155, 240);
+    cursor: pointer;
+    font-weight: bold;
+    padding: 10px 20px;
+}
+
+.cancel-edit-button:hover {
+    background-color: white;
+    color: red;
+    border: 2px solid red;
 }
 
 
@@ -110,7 +127,7 @@ textarea:focus {
     font-size: 0.9em;
 }
 
-.post-actions {
+.post-actions, .edit-post-actions {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
@@ -257,3 +274,4 @@ hr {
     width: 20px;
     margin-left: 5px;
 }
+

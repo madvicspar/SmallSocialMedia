@@ -62,6 +62,7 @@ else
                         @if (post.User.Id == currentUser.Id)
                         {
                             <button class="delete-post">Удалить</button>
+                            <button class="edit-post">Редактировать</button>
                             <button class="">Еще одна заглушка</button>
                         }
                         else
@@ -74,6 +75,15 @@ else
             <div class="post-content">
                 <p>@post.Content</p>
             </div>
+
+            <div class="edit-post-form" style="display: none;">
+                <textarea class="edit-post-content" rows="4">@post.Content</textarea>
+                <div class="edit-post-actions">
+                    <button class="save-post-button">Сохранить</button>
+                    <button class="cancel-edit-button">Отмена</button>
+                </div>
+            </div>
+
             <div class="post-actions">
                 <div class="likes">
                     <div class="like-actions-pic">
@@ -99,7 +109,7 @@ else
                     <div class="new-comment-header">
                         <img class="comment-avatar" src="@(Url.Content(avatarsPath + currentUser.AvatarUrl) ?? defaultAvatarUrl)" alt="Avatar" onerror="this.onerror=null; this.src='@(defaultAvatarUrl)';" />
                         <form id="new-comment-form" class="new-comment-form">
-                            <textarea id="new-comment-content" name="content" placeholder="Введите текст..." rows="4" required></textarea>
+                            <textarea id="new-comment-content" class="new-comment-content" name="content" placeholder="Введите текст..." rows="4" required></textarea>
                         </form>
                     </div>
                     <img class="new-comment-button" src="~/images/send.svg" />

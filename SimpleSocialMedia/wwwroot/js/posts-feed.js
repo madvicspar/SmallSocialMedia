@@ -29,7 +29,7 @@ $(document).on('click', '.new-post-button', function (e) {
 
 function loadPosts() {
     $.ajax({
-        url: '/Feed/GetMyNewsTab',
+        url: '/Feed/GetNewsTab',
         type: 'GET',
         success: function (response) {
             $('.post-feed').html(response);
@@ -101,11 +101,68 @@ $(document).on('click', '.delete-post', function (e) {
     });
 });
 
+$(document).on('click', '.edit-post', function (e) {
+    e.preventDefault();
+    var $post = $(this).closest('.post');
+    $post.find('.post-content').hide();
+    $post.find('.post-actions').hide();
+    $post.find('.post-comments').hide();
+    $post.find('.post-menu').hide();
+    $post.find('.edit-post-form').show();
+    $post.find('.edit-post-content').val($post.find('.post-content p').text());
+});
+
+
+$(document).on('click', '.cancel-edit-button', function (e) {
+    e.preventDefault();
+    var $post = $(this).closest('.post');
+    $post.find('.post-content').show();
+    $post.find('.post-actions').show();
+    $post.find('.post-comments').show();
+    $post.find('.post-menu').show();
+    $post.find('.edit-post-form').hide();
+});
+
+$(document).on('click', '.save-post-button', function (e) {
+    e.preventDefault();
+    var $post = $(this).closest('.post');
+    var postId = $post.data('post-id');
+    var content = $post.find('.edit-post-content').val().trim();
+
+    if (!content) {
+        alert('Пост не может быть пустым.');
+        return;
+    }
+
+    $.ajax({
+        url: `/Posts/Edit`,
+        type: 'POST',
+        data: {
+            content: content,
+            postId: postId
+        },
+        success: function () {
+            $post.find('.post-content p').text(content);
+
+            $post.find('.post-content').show();
+            $post.find('.post-actions').show();
+            $post.find('.post-comments').show();
+            $post.find('.post-menu').show();
+
+            $post.find('.edit-post-form').hide();
+        },
+        error: function (data) {
+            alert('Ошибка при обновлении публикации');
+        }
+    });
+});
+
+
 $(document).on('click', '.new-comment-button', function (e) {
     e.preventDefault();
     var $post = $(this).closest('.post');
     var postId = $post.data('post-id');
-    var content = $('#new-comment-content').val();
+    var content = $post.find('.new-comment-content').val();
 
     $.ajax({
         url: `/Comments/Add`,
@@ -115,7 +172,7 @@ $(document).on('click', '.new-comment-button', function (e) {
             postId: postId
         },
         success: function (data) {
-            $('#new-comment-content').val('');
+            $post.find('.new-comment-content').val('');
             $post.find('.existing-comments').html(data);
         },
         error: function (data) {
